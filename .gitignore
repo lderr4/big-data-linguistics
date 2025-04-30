@@ -4,3 +4,5 @@ notes.txt
 notebooks
 plots
 urban-dictionary
+postgres/data
+__pycache__

@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 def read_and_write_to_parquet(spark, s3_in_path, s3_out_path):
     
     df = spark.read.load(s3_in_path, format="json")
-    df.select("score", "ups", "downs", "subreddit")
+    df = df.select("score", "ups", "downs", "subreddit")
     df.write \
         .mode("overwrite") \
         .parquet(s3_out_path, compression="snappy")

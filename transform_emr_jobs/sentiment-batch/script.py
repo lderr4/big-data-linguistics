@@ -3,7 +3,6 @@
 import nltk
 nltk.data.path.append('/tmp/nltk_data')  
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import boto3
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
         col, 
@@ -27,10 +26,19 @@ logging.basicConfig(level=logging.INFO)
 
 vader = SentimentIntensityAnalyzer()
 bucket_name = "reddit-comments-444449"
-bucket_prefix = "raw/"
-output_dir = "sentiment/"
+input_dir = "raw-parquet"
+output_dir = "sentiment"
 
+def sample_df(df, sample_size=5_000_000):
+    # I'm not convinced that there is a benefit beyond calculating
+    # sentiment for more than 5 million comments per month
+    # so in the interest of time (and $), I'm only going to sample down the dataset
+    total_rows = df.count()
+    fraction = sample_size / total_rows
 
+    if fraction < 1:
+        df = df.sample(withReplacement=False, fraction=fraction)
+    return df
 
 def clean_text(df):
     df = df.select("body") # only care about the text body
@@ -76,25 +84,11 @@ def get_sentiment_df(df):
     return df
     
     
-def get_s3_client():
-    return boto3.client("s3")
+
 
 def get_spark_session():
     try:
-        spark = SparkSession.builder \
-            .config("spark.executor.memory", "7g") \
-            .config("spark.executor.cores", "4") \
-            .config("spark.driver.memory", "4g") \
-            .config("spark.sql.shuffle.partitions", "160") \
-            .config("spark.default.parallelism", "160") \
-            .config("spark.sql.adaptive.enabled", "true") \
-            .config("spark.sql.adaptive.shuffle.targetPostShuffleInputSize", "64MB") \
-            .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer") \
-            .config("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2") \
-            .config("spark.speculation", "true") \
-            .config("spark.hadoop.fs.s3a.fast.upload", "true") \
-            .getOrCreate()
-    
+        spark = SparkSession.getOrCreate()
     except Exception as error:
         logging.error("Error setting up Spark session")
         raise error
@@ -102,7 +96,7 @@ def get_spark_session():
  
 def load_file_to_spark_df(spark, s3_path):
     try:
-        df = spark.read.load(s3_path, format="json")
+        df = spark.read.parquet(s3_path)
         return df
     except Exception as error:
         logging.error(f"Failed to load {s3_path} to SparkSession.")
@@ -116,10 +110,12 @@ def write_df_to_s3(df, s3_path):
         raise error
     
 
-# done
-def get_slang_words(spark, path="s3://reddit-comments-444449/urbandict-word-defs.csv"):
+
+def get_slang_words(spark, 
+                    slang_path="s3://reddit-comments-444449/urbandict-word-defs.csv",
+                    stop_words_path="s3://reddit-comments-444449/stopwords.txt"):
     try:
-        df = spark.read.csv(path, header=True, inferSchema=True, mode="PERMISSIVE")
+        df = spark.read.csv(slang_path ,header=True, inferSchema=True) #mode="PERMISSIVE")
         
         slang_words = (
             df.withColumn("word_count", size(split(col("word"), " ")))
@@ -128,8 +124,17 @@ def get_slang_words(spark, path="s3://reddit-comments-444449/urbandict-word-defs
             .rdd.flatMap(lambda x: x)
             .collect()
         )
+        slang_words = set(slang_words)
+        stopwords = spark.read.text(stop_words_path)
+
+        stopwords = stopwords.withColumnRenamed("value", "word")
+        stopwords = stopwords.select(lower(col("word")).alias("word")).rdd.flatMap(lambda x: x)
+        stopwords = set(stopwords.collect())
         
-        return set(slang_words)
+        slang_words = slang_words - stopwords
+        
+        
+        return slang_words
     
     except Exception as error:
         logging.error(f"Error loading slang word dataset: {error}.")
@@ -138,13 +143,14 @@ def get_slang_words(spark, path="s3://reddit-comments-444449/urbandict-word-defs
     
 def main():
     parser = argparse.ArgumentParser(description='Process Reddit comment data')
-    parser.add_argument('--start-year', type=int, required=True, help='Start year (e.g., 2007)')
+    parser.add_argument('--start-year', type=str, required=True, help='Start year (e.g., 2007)')
     parser.add_argument('--end-year', type=int, required=True, help='End year (e.g., 2015)')
 
     args = parser.parse_args()
-    start_year = int(args.start_year)
-    end_year = int(args.end_year)
+    start_year, start_month = tuple(str(args.start_year).split("."))
+    end_year = args.end_year
     
+    start_year, start_month =  int(start_year), int(start_month)
     
     logging.info("Setting up Spark Session...")
     spark = get_spark_session()
@@ -153,45 +159,30 @@ def main():
     logging.info("Loading Slang Dataset...")
     words = get_slang_words(spark)
     
-    logging.info("Setting up S3 Client...")
-    s3 = get_s3_client()
-    
-    
-    
-    response = s3.list_objects_v2(Bucket=bucket_name, Prefix=bucket_prefix, Delimiter='/')
-    folders = [content['Prefix'] for content in response.get('CommonPrefixes', [])]
-    for folder in folders:
+    for year in range(start_year, end_year+1):
+        for month in range(1,13):
+            if year == start_year and month < start_month:
+                continue
 
-        paginator = s3.get_paginator('list_objects_v2')
-        
-        year = int(folder[4:8])
-        logging.info(f"Moving to {year} directory...")
-        
-        if year < start_year or year > end_year:
-            continue
+            if len(str(month)) == 1:
+                month = "0" + str(month)
+
+            s3_in_path = f"s3a://{bucket_name}/{input_dir}/year={year}/month={month}/comments.parquet"
+            s3_out_path = f"s3a://{bucket_name}/{output_dir}/year={year}/month={month}/sentiment.parquet"
+
+            logging.info(f"Processing {s3_in_path}")
+
             
-        for page in paginator.paginate(Bucket=bucket_name, Prefix=folder):
-            for obj in page.get('Contents', []):
+            df = load_file_to_spark_df(spark, s3_in_path)
+            df = sample_df(df)
+            df = clean_text(df)
 
-                filename = obj['Key']
-                month = filename[-6:-4]
+            df = match_word_bank_udf(spark, df, words)
 
-                logging.info(f"Processing {filename}...")
-
-                s3_file_path = f"s3a://{bucket_name}/{filename}"
-    
-                
-                df = load_file_to_spark_df(spark, s3_file_path)
+            df = get_sentiment_df(df)
             
-                df = clean_text(df)
-
-                df = match_word_bank_udf(spark, df, words)
-
-                df = get_sentiment_df(df)
-                
-                s3_out_path = f"s3a://{bucket_name}/{output_dir}year={year}/month={month}/sentiment.parquet"
-                write_df_to_s3(df, s3_out_path)
-                logging.info(f"Wrote new file to {s3_out_path}")
+            write_df_to_s3(df, s3_out_path)
+            logging.info(f"Wrote new file to {s3_out_path}")
         
 if __name__ == "__main__":
     main()

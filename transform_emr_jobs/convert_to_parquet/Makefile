@@ -70,7 +70,7 @@ build-cluster:
     --region "us-east-1"
 
 upload-bootstrap-script:
-	aws s3 cp bootstrap.sh s3://reddit-comments-444449/bootstrap/bz2_to_parquet/bootstrap.sh
+	aws s3 cp bootstrap.sh s3://reddit-comments-444449/bootstrap/sentiment/bootstrap.sh
 
 
 check-spot-price:

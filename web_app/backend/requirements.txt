@@ -1,0 +1,6 @@
+fastapi
+sqlalchemy
+psycopg2-binary
+pandas
+plotly
+uvicorn

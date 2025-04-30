@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+    postgres:
+      image: debezium/postgres:15
+      container_name: postgres
+      hostname: postgres
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_DB=postgres
+        - POSTGRES_PASSWORD=postgres
+      ports:
+        - "5432:5432"
+      volumes:
+        - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./postgres/data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+      networks:
+        - ud_analytics
+
+    python_load:
+      build:
+        context: ./load_to_postgres/
+      container_name: python_load
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_DB=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_HOSTNAME=postgres
+        - POSTGRES_PORT=5432
+        - START_YEAR=2007
+        - START_MONTH=10
+        - END_YEAR=2015
+      depends_on:
+        postgres:
+          condition: service_healthy
+      volumes:
+        - ~/.aws:/root/.aws  # Mount AWS credentials
+      networks:
+        - ud_analytics
+
+    frontend:
+      build:
+        context: ./web_app/frontend/
+      restart: on-failure
+      container_name: frontend
+      environment:
+        - API_URL=http://backend:8000
+      depends_on:
+        postgres:
+          condition: service_healthy
+      volumes: 
+        - ./web_app/frontend/:/app/
+      ports: 
+        - 8501:8501
+      networks:
+        - ud_analytics
+  
+    backend:
+      build:
+        context: ./web_app/backend/
+      command: uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
+      working_dir: /app
+      restart: on-failure
+      container_name: backend
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_DB=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_HOSTNAME=postgres
+        - POSTGRES_PORT=5432
+        - PYTHONUNBUFFERED=1
+      depends_on:
+        postgres:
+          condition: service_healthy
+    
+      ports:
+        - 8000:8000
+      volumes:
+        - ./web_app/backend/:/app/
+      networks:
+        - ud_analytics
+
+
+networks:
+  ud_analytics:        
