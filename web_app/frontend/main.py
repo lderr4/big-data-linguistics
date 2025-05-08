@@ -29,6 +29,7 @@ if page == "Word Explorer":
         response = requests.get(f"{API_URL}/word-data", params={"word": words})
 
         if response.status_code == 200:
+            
             data = response.json()
             rows = []
             word_summaries = {}
