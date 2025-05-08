@@ -1,4 +1,5 @@
 1. Start up Linux Server using c5.large instance
 2. Attach a 200GB EBS Volume to the server for storing the dataset
 3. SSH into the server.
-4. Run the download script. Make sure you are inside the Volume directory or else you will run out of disk space.
+4. Mount the volume tthat you allocated.
+4. Run the download script. Make sure you are downloading data to the volume.

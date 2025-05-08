@@ -1,5 +1,5 @@
 sudo apt update -y
-sudo apt install unzip curl transmission -y
+sudo apt install unzip curl transmission-cli -y
 
 # download the .torrent file
 curl -L \
