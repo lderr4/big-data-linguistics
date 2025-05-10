@@ -116,7 +116,7 @@ if page == "Word Explorer":
 
 
 elif page == "Yearly Word Trends":
-    st.header("📊 Interesting Stats")
+    st.header("📊 Yearly Word Trends")
 
     year = st.selectbox("Select a year", [i for i in range(2011, 2015)], index=0)
 
