@@ -5,10 +5,12 @@ services:
       image: debezium/postgres:15
       container_name: postgres
       hostname: postgres
+      env_file: .env
       environment:
         - POSTGRES_USER=postgres
         - POSTGRES_DB=postgres
         - POSTGRES_PASSWORD=postgres
+        - PGPASSWORD=${RDS_PASSWORD}
       ports:
         - "5432:5432"
       volumes:
@@ -48,11 +50,9 @@ services:
         context: ./web_app/frontend/
       restart: on-failure
       container_name: frontend
+      env_file: .env
       environment:
-        - API_URL=http://backend:8000
-      depends_on:
-        postgres:
-          condition: service_healthy
+        - API_URL=${API_URL}
       volumes: 
         - ./web_app/frontend/:/app/
       ports: 
@@ -67,16 +67,15 @@ services:
       working_dir: /app
       restart: on-failure
       container_name: backend
+      env_file: .env
       environment:
-        - POSTGRES_USER=postgres
-        - POSTGRES_DB=postgres
-        - POSTGRES_PASSWORD=postgres
-        - POSTGRES_HOSTNAME=postgres
-        - POSTGRES_PORT=5432
+        - POSTGRES_HOSTNAME=${RDS_HOSTNAME}
+        - POSTGRES_DB=${RDS_DB_NAME}
+        - POSTGRES_USER=${RDS_USERNAME}
+        - POSTGRES_PASSWORD=${RDS_PASSWORD}
+        - POSTGRES_PORT=${RDS_PORT}
         - PYTHONUNBUFFERED=1
-      depends_on:
-        postgres:
-          condition: service_healthy
+      
     
       ports:
         - 8000:8000
@@ -84,7 +83,5 @@ services:
         - ./web_app/backend/:/app/
       networks:
         - ud_analytics
-
-
 networks:
   ud_analytics:        

@@ -30,5 +30,3 @@ SELECT *
 FROM ranked_words
 WHERE rank <= 100
 ORDER BY year ASC, rank asc;
-
-select * from reddit_linguistics.bottom_words_by_year_spike

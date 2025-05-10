@@ -6,3 +6,7 @@ plots
 urban-dictionary
 postgres/data
 __pycache__
+.env
+postgres/dump.sql
+.vscode
+
