@@ -6,13 +6,14 @@ from constants import API_URL, BAD_WORDS, WORD_COLS
 import requests
 import logging
 
+st.set_page_config(page_title="Reddit Linguistics Explorer")
+
 logging.basicConfig(
     level=logging.INFO,                                # Show INFO and above
     format="%(asctime)s [%(levelname)s] %(message)s",  # Add timestamps
 )
 
 st.title("Reddit Linguistics Explorer")
-st.set_page_config(page_title="Reddit Linguistics Explorer")
 page = st.selectbox("Select a page", ["Word Explorer", "Yearly Word Trends", "About"])
 
 
