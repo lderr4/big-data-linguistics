@@ -12,6 +12,7 @@ logging.basicConfig(
 )
 
 st.title("Reddit Linguistics Explorer")
+st.set_page_config(page_title="Reddit Linguistics Explorer")
 page = st.selectbox("Select a page", ["Word Explorer", "Yearly Word Trends", "About"])
 
 

@@ -1,4 +1,4 @@
-final_key.pem
+
 notes.txt
 .ipynb_checkpoints
 notebooks
@@ -9,4 +9,4 @@ __pycache__
 .env
 postgres/dump.sql
 .vscode
-
+*.pem
