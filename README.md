@@ -4,7 +4,7 @@ A cloud-based data pipeline and interactive application for ingesting, transform
 
 ## 🌐 Application Link
 
-[Click here to access the application!](http://54.234.10.122:5801)
+[Click here to access the application!](http://54.234.10.122:8501)
 
 ## 📌 Overview
 This project processes Reddit comment data from raw JSON to structured insights using a modular pipeline architecture. It supports scalable transformation via PySpark on EMR, and eventually serves a web application to interact with the transformed data.
