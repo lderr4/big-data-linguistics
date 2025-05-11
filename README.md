@@ -2,6 +2,11 @@
 
 A cloud-based data pipeline and interactive application for ingesting, transforming, and analyzing Reddit comments using AWS, Spark, PostgreSQL, and containerized Python services.
 
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Dockerized](https://img.shields.io/badge/Dockerized-Yes-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+
 ## 🌐 Application Link
 
 [Click here to access the application!](http://54.234.10.122:8501)
@@ -33,11 +38,11 @@ The results of the Spark jobs are persisted to S3 in parquet format. They retain
 #### 7. PostgreSQL Container
 The local Postgres container is used only as a development environment for web application development and for analytical querying.
 #### 8. Backend Container (FastAPI)
-FastAPI is used inside a Python container for the backend to query to query postgres. [Here is the code](https://github.com/lderr4/big-data-linguistics/tree/master/web_app/backend).
+FastAPI is used inside a Python container for the backend to query Postgres. [Here is the code](https://github.com/lderr4/big-data-linguistics/tree/master/web_app/backend).
 #### 9. Frontend Container (Streamlit)
 Streamlit is used inside a Python container for the frontend interface. [Here is the code](https://github.com/lderr4/big-data-linguistics/tree/master/web_app/frontend).
 #### 10. Analytical Queries (DBeaver)
-DBeaver connects to the local postgres database for analytical querying / exploration. [Here are some of the the queries](https://github.com/lderr4/big-data-linguistics/tree/master/postgres). 
+DBeaver connects to the local postgres database for analytical querying / exploration. [Here are some of the queries](https://github.com/lderr4/big-data-linguistics/tree/master/postgres). 
 #### 11. Github Repository
 This repository is used to push code to the production webserver and run the frontend and backend containers.
 #### 12. Production Database (RDS)
