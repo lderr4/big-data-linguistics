@@ -8,5 +8,5 @@ docker cp dump.sql postgres:/tmp/dump.sql
 
 
 docker exec postgres \
-psql "postgresql://postgres:${RDS_PASSWORD}@database-1.c6z48aiccjir.us-east-1.rds.amazonaws.com:5432/postgres" \
+psql "postgresql://${RDS_USERNAME}:${RDS_PASSWORD}@${RDS_ENDPOINT}:${RDS_PORT}/${RDS_DB_NAME}" \
 -f /tmp/dump.sql

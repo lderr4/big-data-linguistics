@@ -10,7 +10,11 @@ services:
         - POSTGRES_USER=postgres
         - POSTGRES_DB=postgres
         - POSTGRES_PASSWORD=postgres
-        - PGPASSWORD=${RDS_PASSWORD}
+        - RDS_PASSWORD=${RDS_PASSWORD}
+        - RDS_ENDPOINT=${RDS_HOSTNAME}
+        - RDS_PORT=${RDS_PORT}
+        - RDS_DB_NAME=${RDS_DB_NAME}
+        - RDS_USERNAME=${RDS_USERNAME}
       ports:
         - "5432:5432"
       volumes:
@@ -75,8 +79,6 @@ services:
         - POSTGRES_PASSWORD=${RDS_PASSWORD}
         - POSTGRES_PORT=${RDS_PORT}
         - PYTHONUNBUFFERED=1
-      
-    
       ports:
         - 8000:8000
       volumes:
