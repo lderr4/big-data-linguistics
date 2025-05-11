@@ -2,10 +2,17 @@
 
 A cloud-based data pipeline and interactive application for ingesting, transforming, and analyzing Reddit comments using AWS, Spark, PostgreSQL, and containerized Python services.
 
-![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Dockerized](https://img.shields.io/badge/Dockerized-Yes-blue)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+![Python](https://img.shields.io/badge/Python-3.8-blue)
+![Dockerized](https://img.shields.io/badge/Dockerized-yes-blue)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-ff4b4b?logo=streamlit&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql&logoColor=white)
+![Spark](https://img.shields.io/badge/Spark-3.3.0-orange)
+![AWS S3](https://img.shields.io/badge/Storage-S3-yellow?logo=amazon-aws&logoColor=white)
+![AWS EMR](https://img.shields.io/badge/Compute-EMR-blue?logo=amazon-aws&logoColor=white)
+
 
 ## 🌐 Application Link
 
