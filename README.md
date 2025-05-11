@@ -25,7 +25,7 @@ The data is a subset of the following [torrent dataset](https://academictorrents
 It contains Reddit Comments that are partitioned by year and month from October 2007 to May 2015. 
 In total, the dataset contains ~1.7 billion comments and is about 160 GB compressed in bzip2 format, amounting to over 1 TB uncompressed.
 #### 2. Data Ingestion Server / EBS Volume
-A C5.large EC2 instance with a 200GB gp3 general purpose volume is used to extract the data and upload it to S3. 
+A c5.large EC2 instance with a 200GB gp3 general purpose volume is used to extract the data and upload it to S3. 
 [These commands](https://github.com/lderr4/big-data-linguistics/blob/master/scripts/extract_to_s3/download_script.sh)  setup and download the dataset using the [Transmission](https://transmissionbt.com/) BitTorrent client.
 The data is then uploaded to S3 using the [AWS CLI S3 CP command](https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html).
 #### 3. Raw Data (S3)
