@@ -1,11 +1,10 @@
 # 📊 Big Data Linguistics: Reddit Comment Pipeline
 
-A cloud-based data pipeline for ingesting, transforming, and analyzing Reddit comments using AWS, Spark, PostgreSQL, and containerized Python services.
+A cloud-based data pipeline and interactive application for ingesting, transforming, and analyzing Reddit comments using AWS, Spark, PostgreSQL, and containerized Python services.
 
 ## 🌐 Application Link
 
-[Click here to access the application!](54.234.10.122:5801)
-
+[Click here to access the application!](http://54.234.10.122:5801)
 
 ## 📌 Overview
 This project processes Reddit comment data from raw JSON to structured insights using a modular pipeline architecture. It supports scalable transformation via PySpark on EMR, and eventually serves a web application to interact with the transformed data.
