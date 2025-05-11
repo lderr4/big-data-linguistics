@@ -83,5 +83,6 @@ services:
         - ./web_app/backend/:/app/
       networks:
         - ud_analytics
+
 networks:
-  ud_analytics:        
+  ud_analytics:
