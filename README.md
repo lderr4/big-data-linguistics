@@ -55,10 +55,10 @@ Data is replicated from the local postgres container and pushed to RDS using [th
 The frontend and backend containers run on a Lightsail Ubuntu instance to serve the application. [Here is the setup for the instance](https://github.com/lderr4/big-data-linguistics/blob/master/scripts/webserver_setup.sh).
 
 ## 🚧 Future Work
-- Add sentiment analysis module
-- Deploy with Terraform
-- Add CI/CD workflows for ETL jobs
-- Integrate language change visualizations
+- Expand the dataset beyond 2015
+- Incorporate N-Grams
+- Modularize AWS infrastructure creation via Terraform or Cloudformation
+- Add more sophisticated data analysis (partition by subreddit, topic modelling, user behavior analysis)
 
 ## Disclaimer
 This project is strictly for educational and non-commercial purposes. The dataset used includes publicly available Reddit comments, sourced from Reddit. All analysis is performed on anonymized and aggregated data — no personal identifiers (usernames, exact timestamps, etc.) are stored or shared. This work complies with fair use principles for research and does not represent the views of Reddit or its users. For questions, contact lucasrderr@gmail.com.
