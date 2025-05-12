@@ -58,7 +58,7 @@ The frontend and backend containers run on a Lightsail Ubuntu instance to serve 
 - Expand the dataset beyond 2015
 - Incorporate N-Grams
 - Modularize AWS infrastructure creation via Terraform or Cloudformation
-- Add more sophisticated data analysis (partition by subreddit, topic modelling, user behavior analysis)
+- Add more sophisticated data analysis (partition by subreddit, topic modelling, user behavior analysis, etc)
 
 ## Disclaimer
 This project is strictly for educational and non-commercial purposes. The dataset used includes publicly available Reddit comments, sourced from Reddit. All analysis is performed on anonymized and aggregated data — no personal identifiers (usernames, exact timestamps, etc.) are stored or shared. This work complies with fair use principles for research and does not represent the views of Reddit or its users. For questions, contact lucasrderr@gmail.com.
